@@ -1,6 +1,6 @@
 {
   "name": "react-context-table",
-  "version": "1.0.15",
+  "version": "1.0.17",
   "description": "a react table component to display large data set with high performance and flexibility",
   "main": "lib/index.js",
   "module": "es/index.js",
@@ -49,7 +49,6 @@
     "classnames": "^2.2.5",
     "memoize-one": "^5.0.0",
     "prop-types": "^15.7.0",
-    "react-context-table": "^1.0.12",
     "react-virtualized-auto-sizer": "^1.0.6",
     "react-window": "^1.8.2",
     "typescript": "^4.7.4"
@@ -84,7 +83,7 @@
     "jest": "^23.5.0",
     "lerna": "^3.2.1",
     "lint-staged": "^7.2.2",
-    "node-sass": "^7.0.1",
+    "node-sass": "^9.0.0",
     "prettier": "^1.14.2",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
