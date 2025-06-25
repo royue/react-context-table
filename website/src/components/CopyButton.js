@@ -1,66 +1,53 @@
-import React from 'react'
+import React, { useState, useRef, useEffect } from 'react'
 import clipboard from 'clipboard'
 
 import CornerButton from './CornerButton'
 
-class CopyButton extends React.PureComponent {
-  state = {
-    text: this.props.text,
+function CopyButton(props) {
+  const { content, text: defaultText = 'copy', ...rest } = props
+  const [text, setText] = useState(defaultText)
+  const ref = useRef(null)
+  const timerRef = useRef(null)
+  const clipboardRef = useRef(null)
+
+  const clearTimer = () => {
+    if (timerRef.current) {
+      clearTimeout(timerRef.current)
+      timerRef.current = null
+    }
   }
 
-  handleRef = ref => (this.ref = ref)
-
-  onSuccess = () => {
-    this.clearTimer()
-    this.setState({ text: 'copied' }, () => {
-      this.timer = setTimeout(() => {
-        this.setState({ text: this.props.text })
+  useEffect(() => {
+    clearTimer()
+    clipboardRef.current = new clipboard(ref.current)
+    const onSuccess = () => {
+      clearTimer()
+      setText('copied')
+      timerRef.current = setTimeout(() => {
+        setText(defaultText)
       }, 300)
-    })
-  }
-
-  onError = () => {
-    this.clearTimer()
-    this.setState({ text: 'failed' }, () => {
-      this.timer = setTimeout(() => {
-        this.setState({ text: this.props.text })
+    }
+    const onError = () => {
+      clearTimer()
+      setText('failed')
+      timerRef.current = setTimeout(() => {
+        setText(defaultText)
       }, 300)
-    })
-  }
+    }
+    clipboardRef.current.on('success', onSuccess)
+    clipboardRef.current.on('error', onError)
+    return () => {
+      clipboardRef.current && clipboardRef.current.destroy()
+      clearTimer()
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [defaultText])
 
-  clearTimer = () => {
-    this.timer && clearTimeout(this.timer)
-  }
-
-  componentDidMount() {
-    this.clearTimer()
-    this.clipboard = new clipboard(this.ref)
-
-    this.clipboard.on('success', this.onSuccess)
-    this.clipboard.on('error', this.onError)
-  }
-
-  componentWillUnmount() {
-    this.clipboard && this.clipboard.destroy()
-  }
-
-  render() {
-    const { content, ...rest } = this.props
-    const { text } = this.state
-    return (
-      <CornerButton
-        ref={this.handleRef}
-        data-clipboard-text={content}
-        {...rest}
-      >
-        {text}
-      </CornerButton>
-    )
-  }
-}
-
-CopyButton.defaultProps = {
-  text: 'copy',
+  return (
+    <CornerButton ref={ref} data-clipboard-text={content} {...rest}>
+      {text}
+    </CornerButton>
+  )
 }
 
 export default CopyButton

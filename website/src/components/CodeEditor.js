@@ -35,18 +35,27 @@ const StyledEditor = styled(Editor)`
 const CodeEditor = ({ sourceCode, language, onChange, ...rest }) => {
   const [code, setCode] = useState(sourceCode)
   const debouncedChange = useMemo(() => debounce(onChange, 300), [onChange])
-  const handleChange = useCallback(code => {
-    setCode(code)
-    debouncedChange(code)
-  }, [debouncedChange])
+  const handleChange = useCallback(
+    code => {
+      setCode(code)
+      debouncedChange(code)
+    },
+    [debouncedChange]
+  )
   useEffect(() => setCode(sourceCode), [sourceCode])
+
+  const safeCode = typeof code === 'string' ? code : String(code ?? '')
 
   return (
     <Container {...rest}>
       <EditorContainer>
-        <StyledEditor code={code} language={language} onChange={handleChange} />
+        <StyledEditor
+          code={safeCode}
+          language={language}
+          onChange={handleChange}
+        />
       </EditorContainer>
-      <CopyButton content={code} />
+      <CopyButton content={safeCode} />
     </Container>
   )
 }

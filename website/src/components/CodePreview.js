@@ -58,8 +58,10 @@ const CodePreview = ({
     action,
     _scope,
   ])
+  const safeSourceCode =
+    typeof sourceCode === 'string' ? sourceCode : String(sourceCode ?? '')
   const { element, error, onChange } = useLiveRunner({
-    sourceCode,
+    sourceCode: safeSourceCode,
     scope,
     type,
   })

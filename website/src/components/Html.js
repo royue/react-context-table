@@ -37,7 +37,10 @@ const Pre = props => {
 
   const { children, className } = props.children[0].props
   const language = className && className.split('-')[1]
-  const code = children[0]
+  let code = children[0]
+  if (typeof code !== 'string') {
+    code = code == null ? '' : String(code)
+  }
 
   const meta = parseMeta(props.children[0].props['data-meta'])
   const { live, ...rest } = meta

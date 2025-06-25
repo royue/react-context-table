@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import styled from 'styled-components'
 import Inspector from 'react-inspector'
 
@@ -20,51 +20,41 @@ const ClearButton = styled(CornerButton)`
   background-color: transparent;
 `
 
-class ActionPanel extends React.Component {
-  constructor(props) {
-    super(props)
-    this.props.channel.on(this.onAction)
-  }
+const ActionPanel = ({ channel }) => {
+  const [actions, setActions] = useState([])
 
-  state = {
-    actions: [],
-  }
+  // 事件处理函数
+  const onAction = useCallback(action => {
+    setActions(prev => [action, ...prev.slice(0, 99)])
+  }, [])
 
-  componentWillUnmount() {
-    this.props.channel.off(this.onAction)
-  }
+  const onClear = useCallback(() => {
+    setActions([])
+  }, [])
 
-  render() {
-    const { actions } = this.state
-    if (!actions.length) return null
-    return (
-      <Container>
-        <ActionsContainer>
-          {actions.map((action, idx) => (
-            <Inspector
-              key={`${action.name}-${actions.length - idx}`}
-              showNonenumerable={false}
-              name={action.name}
-              data={action.args}
-            />
-          ))}
-        </ActionsContainer>
-        <ClearButton onClick={this.onClear}>clear</ClearButton>
-      </Container>
-    )
-  }
+  useEffect(() => {
+    channel.on(onAction)
+    return () => {
+      channel.off(onAction)
+    }
+  }, [channel, onAction])
 
-  onAction = action => {
-    this.setState(({ actions }) => ({
-      actions: [action, ...actions.slice(0, 99)],
-    }))
-  }
-
-  onClear = () => {
-    this.setState({
-      actions: [],
-    })
-  }
+  if (!actions.length) return null
+  return (
+    <Container>
+      <ActionsContainer>
+        {actions.map((action, idx) => (
+          <Inspector
+            key={`${action.name}-${actions.length - idx}`}
+            showNonenumerable={false}
+            name={action.name}
+            data={action.args}
+          />
+        ))}
+      </ActionsContainer>
+      <ClearButton onClick={onClear}>clear</ClearButton>
+    </Container>
+  )
 }
 
 export default ActionPanel

@@ -16,7 +16,7 @@ const TableHeaderRow = ({
     expandColumnKey,
     isForceKey,
     expandIcon: ExpandIcon,
-    tagName: Tag,
+    tagName: Tag = 'div',
     checkDisabled,
     ...rest
 }) => {
@@ -40,10 +40,6 @@ const TableHeaderRow = ({
             {cells}
         </Tag>
     );
-};
-
-TableHeaderRow.defaultProps = {
-    tagName: 'div'
 };
 
 TableHeaderRow.propTypes = {

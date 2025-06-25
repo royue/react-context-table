@@ -3,24 +3,42 @@ const _ = require('lodash')
 
 const siteConfig = require('./siteConfig')
 
-exports.onCreateWebpackConfig = ({ stage, getConfig, actions }) => {
-  const config = getConfig()
-
-  config.resolve.alias = {
-    ...config.resolve.alias,
-    assets: path.resolve(__dirname, 'src/assets'),
-    components: path.resolve(__dirname, 'src/components'),
-    utils: path.resolve(__dirname, 'src/utils'),
-    siteConfig: path.resolve(__dirname, 'siteConfig'),
-    'react-context-table/package.json': path.resolve(
-      __dirname,
-      '../package.json'
-    ),
-    'react-context-table/styles.css': path.resolve(__dirname, '../styles.css'),
-    'react-context-table': path.resolve(__dirname, '../src'),
-  }
-
-  actions.replaceWebpackConfig(config)
+exports.onCreateWebpackConfig = ({ getConfig, loaders, actions }) => {
+  actions.setWebpackConfig({
+    resolve: {
+      alias: {
+        assets: path.resolve(__dirname, 'src/assets'),
+        components: path.resolve(__dirname, 'src/components'),
+        utils: path.resolve(__dirname, 'src/utils'),
+        siteConfig: path.resolve(__dirname, 'siteConfig'),
+        'react-context-table/package.json': path.resolve(
+          __dirname,
+          '../package.json'
+        ),
+        'react-context-table/styles.css': path.resolve(
+          __dirname,
+          '../styles.css'
+        ),
+        'react-context-table': path.resolve(__dirname, '../src'),
+      },
+    },
+    // module: {
+    //   rules: [
+    //     {
+    //       test: /\.js?$/,
+    //       use: {
+    //         loader: 'babel-loader',
+    //         options: {
+    //           presets: [require.resolve('babel-preset-gatsby')],
+    //           plugins: [
+    //             require.resolve('@babel/plugin-proposal-class-properties'),
+    //           ],
+    //         },
+    //       },
+    //     },
+    //   ],
+    // },
+  })
 }
 
 exports.onCreateNode = ({ node, actions, getNode, createNodeId }) => {
@@ -150,5 +168,30 @@ exports.createPages = async ({ graphql, actions, getNode }) => {
         name,
       },
     })
+  })
+}
+// exports.onCreateBabelConfig = ({ actions }) => {
+//   actions.setBabelPlugin({
+//     name: '@babel/plugin-proposal-class-properties',
+//     // 可选：配置 loose 模式（默认为 false）
+//     options: { loose: true }, // 直接通过赋值语法编译，而非 Object.defineProperty
+//   })
+// }
+exports.onCreateBabelConfig = ({ actions }) => {
+  console.log('onCreateBabelConfig', actions)
+  // actions.overrideBabelConfig(({ babelConfig }) => {
+  //   babelConfig.plugins = babelConfig.plugins || []
+  //   babelConfig.plugins.push([
+  //     '@babel/plugin-proposal-class-properties',
+  //     { loose: true },
+  //   ])
+  //   return babelConfig
+  // })
+  actions.setBabelPreset({
+    name: '@babel/preset-env',
+    options: {
+      targets: { browsers: ['last 2 versions'] },
+      loose: true,
+    },
   })
 }

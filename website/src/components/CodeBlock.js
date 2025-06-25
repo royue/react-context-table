@@ -22,7 +22,12 @@ const StyledCode = styled(Code)`
 const CodeBlock = ({ code = '', language = 'jsx', ...rest }) => (
   <Container {...rest}>
     <Scroll>
-      <StyledCode code={code.trim()} language={language} padding={10} noWrap />
+      <StyledCode
+        code={typeof code === 'string' ? code : String(code ?? '')}
+        language={language}
+        padding={10}
+        noWrap
+      />
     </Scroll>
     <CopyButton content={code} />
   </Container>

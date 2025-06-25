@@ -1,5 +1,7 @@
 export default class EventEmitter {
-  handlersMap = {}
+  constructor() {
+    this.handlersMap = {}
+  }
 
   on(type, handler) {
     const handlers = this.handlersMap[type]
